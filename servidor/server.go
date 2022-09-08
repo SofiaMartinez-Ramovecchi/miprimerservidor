@@ -5,6 +5,7 @@ import (
 	"log"
 	"net"
 	"os"
+	"strconv"
 	"strings"
 )
 
@@ -17,7 +18,7 @@ func main() {
 	}
 
 	//clientes
-	var i int
+	var i int64
 	for {
 
 		fmt.Println("Esperando un cliente")
@@ -33,7 +34,7 @@ func main() {
 	}
 }
 
-func managerconnection(cliente net.Conn, i int) {
+func managerconnection(cliente net.Conn, i int64) {
 	//creando una variable de struct para enviar al array arrayUser
 	c := userConnection{
 		connection: cliente,
@@ -48,6 +49,17 @@ func managerconnection(cliente net.Conn, i int) {
 		_, err := cliente.Read(buff)
 		if err != nil {
 			panic(err)
+		}
+		//guardando numero de canal al que quiere enviar archivo extraido de buff en variable canal
+		aux := string(buff)
+		var auxArray []string = strings.Split(aux, " ")
+		auxCanal := auxArray[1]
+		var auxCanalArray []string = strings.Split(auxCanal, ".fin")
+		canalString := auxCanalArray[0]
+		canal, errCanal := strconv.ParseInt(canalString, 10, 0)
+		if errCanal != nil {
+			fmt.Println("Error al pasar variable canal de string a int")
+			log.Fatal(errCanal)
 		}
 
 		//declarando nombre archivo pasandolo a string
@@ -99,17 +111,17 @@ func managerconnection(cliente net.Conn, i int) {
 		//cerrando copia de archivo
 		emptyFile.Close()
 		//se lo manda a todos los usuarios
-		writeMessageUser(data)
+		writeMessageUser(data, canal)
 
 	}
 
 }
 
-func writeMessageUser(message []byte) {
+func writeMessageUser(message []byte, canal int64) {
 	for _, c := range arrayUser {
 		//recorro el array de struct arrayUser
 		//si el id coincide con el numero enviado, envio el mensaje a esa coneccion
-		if c.id == 1 {
+		if c.id == canal {
 			c.connection.Write(message)
 		}
 

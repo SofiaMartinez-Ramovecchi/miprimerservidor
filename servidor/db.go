@@ -6,7 +6,7 @@ import "net"
 
 type userConnection struct {
 	connection net.Conn
-	id         int
+	id         int64
 }
 
 var arrayUser []userConnection
