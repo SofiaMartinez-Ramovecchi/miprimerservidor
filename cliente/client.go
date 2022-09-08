@@ -12,6 +12,7 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
+	fmt.Println(serverCnn)
 
 	//escuchando lo que manda el servidor
 
@@ -26,6 +27,7 @@ func writeMessage(conn net.Conn) {
 	for scanner.Scan() {
 		//una vez cada vez que se preisona enter
 		var texto = scanner.Text()
+
 		_, err := conn.Write([]byte(texto))
 		if err != nil {
 			panic(err)

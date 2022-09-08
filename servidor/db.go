@@ -4,4 +4,9 @@ package main
 
 import "net"
 
-var userConnection []net.Conn
+type userConnection struct {
+	connection net.Conn
+	id         int
+}
+
+var arrayUser []userConnection
